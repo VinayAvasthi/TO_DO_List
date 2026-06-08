@@ -1,44 +1,45 @@
-const taskInput = document.getElementById("taskInput");
-const addBtn = document.getElementById("addBtn");
-const taskList = document.getElementById("taskList");
+const inputBox = document.querySelector("#taskInput");
+const addButton = document.querySelector("#addBtn");
+const listContainer = document.querySelector("#taskList");
 
-addBtn.addEventListener("click", addTask);
+function createTask(text) {
+    const taskItem = document.createElement("li");
 
-taskInput.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        addTask();
-    }
-});
+    taskItem.innerHTML = `
+        <span>${text}</span>
+        <button class="delete-btn">Remove</button>
+    `;
 
-function addTask() {
-    const taskText = taskInput.value.trim();
+    const taskText = taskItem.querySelector("span");
+    const removeBtn = taskItem.querySelector(".delete-btn");
 
-    if (taskText === "") {
-        alert("Please enter a task!");
+    taskText.onclick = () => {
+        taskText.classList.toggle("completed");
+    };
+
+    removeBtn.onclick = () => {
+        taskItem.remove();
+    };
+
+    listContainer.append(taskItem);
+}
+
+function handleTask() {
+    const value = inputBox.value.trim();
+
+    if (!value) {
+        alert("Task field cannot be empty!");
         return;
     }
 
-    const li = document.createElement("li");
-
-    const span = document.createElement("span");
-    span.textContent = taskText;
-
-    span.addEventListener("click", function() {
-        span.classList.toggle("completed");
-    });
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.classList.add("delete-btn");
-
-    deleteBtn.addEventListener("click", function() {
-        li.remove();
-    });
-
-    li.appendChild(span);
-    li.appendChild(deleteBtn);
-
-    taskList.appendChild(li);
-
-    taskInput.value = "";
+    createTask(value);
+    inputBox.value = "";
 }
+
+addButton.onclick = handleTask;
+
+inputBox.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        handleTask();
+    }
+});
